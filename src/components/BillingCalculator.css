@@ -1,0 +1,297 @@
+.billing-calculator {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  margin: 20px auto;
+  font-family: 'Arial', sans-serif;
+  color: white;
+}
+
+.calculator-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.calculator-header h3 {
+  color: white;
+  margin: 0 0 5px 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.calculator-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.calculator-display {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.display-value {
+  color: white;
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-align: right;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.billing-controls {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.billing-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.billing-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.discount-section, .tax-section {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.discount-input, .tax-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.discount-input:focus, .tax-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.calculator-buttons {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+  transform: translateY(-1px);
+}
+
+.btn-number {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.btn-number:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.btn-operation {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-operation:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-function {
+  background: rgba(255, 193, 7, 0.9);
+  color: #333;
+}
+
+.btn-function:hover {
+  background: rgba(255, 193, 7, 1);
+}
+
+.btn-equals {
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+  grid-column: span 2;
+}
+
+.btn-equals:hover {
+  background: rgba(40, 167, 69, 1);
+}
+
+.btn-zero {
+  grid-column: span 2;
+}
+
+.calculation-history {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.history-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.clear-history-btn {
+  background: rgba(220, 53, 69, 0.8);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-history-btn:hover {
+  background: rgba(220, 53, 69, 1);
+}
+
+.history-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.history-calculation {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.history-result {
+  font-weight: 600;
+  color: #4ade80;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .billing-calculator {
+    max-width: 320px;
+    padding: 20px;
+  }
+  
+  .btn {
+    padding: 12px;
+    font-size: 1.1rem;
+    min-height: 50px;
+  }
+  
+  .display-value {
+    font-size: 1.8rem;
+  }
+  
+  .discount-section, .tax-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .billing-btn {
+    width: 100%;
+  }
+}
+
+/* Animation for button press */
+@keyframes buttonPress {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.btn:active {
+  animation: buttonPress 0.1s ease;
+}
+
+/* Scrollbar styling for history */
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+} 

@@ -1,0 +1,153 @@
+.calculator {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 350px;
+  margin: 20px auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.calculator-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.calculator-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.calculator-display {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.display-value {
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: right;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.calculator-buttons {
+  display: grid;
+  gap: 10px;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-number {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.btn-number:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.btn-operation {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.btn-operation:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-function {
+  background: rgba(255, 193, 7, 0.9);
+  color: #333;
+}
+
+.btn-function:hover {
+  background: rgba(255, 193, 7, 1);
+}
+
+.btn-equals {
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+  grid-column: span 2;
+}
+
+.btn-equals:hover {
+  background: rgba(40, 167, 69, 1);
+}
+
+.btn-zero {
+  grid-column: span 2;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .calculator {
+    max-width: 300px;
+    padding: 15px;
+  }
+  
+  .btn {
+    padding: 12px;
+    font-size: 1rem;
+    min-height: 45px;
+  }
+  
+  .display-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animation for button press */
+@keyframes buttonPress {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.btn:active {
+  animation: buttonPress 0.1s ease;
+}
+
+/* Calculator section styling */
+.calculator-section {
+  margin: 40px 0;
+  display: flex;
+  justify-content: center;
+} 
