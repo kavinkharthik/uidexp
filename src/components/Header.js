@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 
-const Header = ({ username, onLogout, onOpenProfile, onGoHome, currentPage, onOpenAdmin }) => {
+const Header = ({ username, onLogout, onOpenProfile, onGoHome, currentPage, onOpenAdmin, onOpenContact }) => {
   return (
     <header className="header">
       <div className="header-container">

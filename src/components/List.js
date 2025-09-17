@@ -117,6 +117,7 @@ const List = ({ selectedCategory, onGoHome }) => {
           </div>
         </div>
 
+
         {showCart && (
           <div className="cart-section">
             <h3>🛒 Shopping Cart</h3>

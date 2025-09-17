@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import Calculator from './Calculator';
+import Experiment6FormList from './Experiment6FormList'; // Adjust path if needed
 
-const Home = ({ onNavigateToCategory }) => {
+const Home = ({ onNavigateToCategory, onOpenTodoList, onOpenMobileCRUD }) => {
   const [showCalculator, setShowCalculator] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -10,24 +11,9 @@ const Home = ({ onNavigateToCategory }) => {
   const [currentFeature, setCurrentFeature] = useState(0);
 
   const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Tech Enthusiast",
-      text: "Amazing collection of premium smartphones! The quality and service are outstanding.",
-      rating: 5
-    },
-    {
-      name: "Mike Chen",
-      role: "Business Owner",
-      text: "Best mobile showroom I've visited. Great prices and excellent customer support.",
-      rating: 5
-    },
-    {
-      name: "Emily Davis",
-      role: "Student",
-      text: "Found the perfect phone for my budget. Highly recommend this place!",
-      rating: 5
-    }
+    { name: "Sarah Johnson", role: "Tech Enthusiast", text: "Amazing collection of premium smartphones! The quality and service are outstanding.", rating: 5 },
+    { name: "Mike Chen", role: "Business Owner", text: "Best mobile showroom I've visited. Great prices and excellent customer support.", rating: 5 },
+    { name: "Emily Davis", role: "Student", text: "Found the perfect phone for my budget. Highly recommend this place!", rating: 5 }
   ];
 
   useEffect(() => {
@@ -58,8 +44,8 @@ const Home = ({ onNavigateToCategory }) => {
     const offsetY = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateY = ((offsetX - centerX) / centerX) * 10; // -10 to 10
-    const rotateX = -((offsetY - centerY) / centerY) * 10; // -10 to 10
+    const rotateY = ((offsetX - centerX) / centerX) * 10;
+    const rotateX = -((offsetY - centerY) / centerY) * 10;
     setTilt({ x: rotateX, y: rotateY });
   };
 
@@ -72,6 +58,7 @@ const Home = ({ onNavigateToCategory }) => {
         <span className="blob b2" />
         <span className="blob b3" />
       </div>
+
       {/* Minimal Top Navigation */}
       <nav className="home-navigation">
         <div className="nav-container">
@@ -84,6 +71,8 @@ const Home = ({ onNavigateToCategory }) => {
             <button className="nav-btn" onClick={() => onNavigateToCategory('accessories')}>🎧 Accessories</button>
             <button className="nav-btn" onClick={() => onNavigateToCategory('all')}>🛒 All</button>
             <button className="nav-calculator-btn" onClick={() => setShowCalculator(!showCalculator)}>🧮 Calculator</button>
+            <button className="nav-btn" onClick={onOpenTodoList}>📝 Todo List</button>
+            <button className="nav-btn" onClick={onOpenMobileCRUD}>🗄️ Mobile CRUD</button>
           </div>
         </div>
       </nav>
@@ -98,7 +87,7 @@ const Home = ({ onNavigateToCategory }) => {
         </div>
       )}
 
-      {/* Single-screen Professional Hero */}
+      {/* Single-screen Hero Section */}
       <div className="home-container">
         <section className="hero-section hero-full">
           <div className="hero-grid">

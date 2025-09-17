@@ -7,6 +7,9 @@ import List from './components/List';
 import Footer from './components/Footer';
 import UserProfile from './components/UserProfile';
 import AdminPanel from './components/AdminPanel';
+import AddItemForm from './components/AddItemForm';
+import TodoList from './components/TodoList';
+import MobileCRUD from './components/MobileCRUD';
 
 function Contact() {
   return (
@@ -164,6 +167,18 @@ function App() {
     setCurrentPage('contact');
   };
 
+  const handleOpenAddItemForm = () => {
+    setCurrentPage('addItem');
+  };
+
+  const handleOpenTodoList = () => {
+    setCurrentPage('todo');
+  };
+
+  const handleOpenMobileCRUD = () => {
+    setCurrentPage('mobile-crud');
+  };
+
   if (!isLoggedIn) {
     return <Auth onLogin={handleLogin} />;
   }
@@ -177,13 +192,22 @@ function App() {
         onGoHome={handleGoHome}
         onOpenAdmin={handleOpenAdmin}
         onOpenContact={handleOpenContact}
+        onOpenAddItemForm={handleOpenAddItemForm}
+        onOpenTodoList={handleOpenTodoList}
+        onOpenMobileCRUD={handleOpenMobileCRUD}
         currentPage={currentPage}
       />
 
       {currentPage === 'home' ? (
-        <Home onNavigateToCategory={handleNavigateToCategory} />
+        <Home onNavigateToCategory={handleNavigateToCategory} onOpenTodoList={handleOpenTodoList} onOpenMobileCRUD={handleOpenMobileCRUD} />
       ) : currentPage === 'contact' ? (
         <Contact />
+      ) : currentPage === 'addItem' ? (
+        <AddItemForm />
+      ) : currentPage === 'todo' ? (
+        <TodoList />
+      ) : currentPage === 'mobile-crud' ? (
+        <MobileCRUD />
       ) : (
         <List selectedCategory={selectedCategory} onGoHome={handleGoHome} />
       )}
