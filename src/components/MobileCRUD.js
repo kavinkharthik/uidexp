@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './MobileCRUD.css';
 
 const MobileCRUD = () => {
@@ -19,14 +19,9 @@ const MobileCRUD = () => {
         description: ''
     });
 
-    // Load mobiles from MongoDB API
-    useEffect(() => {
-        fetchMobiles();
-    }, []);
-
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-    const fetchMobiles = async () => {
+    const fetchMobiles = useCallback(async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/mobiles`);
             if (response.ok) {
@@ -42,7 +37,12 @@ const MobileCRUD = () => {
             // Fallback to mock data if API fails
             loadMockData();
         }
-    };
+    }, [API_BASE_URL]);
+
+    // Load mobiles from MongoDB API
+    useEffect(() => {
+        fetchMobiles();
+    }, [fetchMobiles]);
 
     const loadMockData = () => {
         const mockMobiles = [

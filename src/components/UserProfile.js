@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './UserProfile.css';
 
-const UserProfile = ({ user, onUpdateProfile, onClose }) => {
+const UserProfile = ({ onClose }) => {
+  const { user, updateProfile, loading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({
-    username: user?.username || '',
-    email: user?.email || '',
     fullName: user?.fullName || '',
+    email: user?.email || '',
     phone: user?.phone || '',
     bio: user?.bio || '',
     location: user?.location || ''
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleInputChange = (e) => {
     setEditedUser({
@@ -19,23 +22,50 @@ const UserProfile = ({ user, onUpdateProfile, onClose }) => {
     });
   };
 
-  const handleSave = () => {
-    if (onUpdateProfile) {
-      onUpdateProfile(editedUser);
+  const handleSave = async () => {
+    try {
+      setError('');
+      setSuccess('');
+      
+      // Only update fields that can be updated via the API
+      const updateData = {
+        fullName: editedUser.fullName,
+        email: editedUser.email
+      };
+
+      const result = await updateProfile(updateData);
+      
+      if (result.success) {
+        setSuccess('Profile updated successfully!');
+        setIsEditing(false);
+        
+        // Update local state with the new user data
+        setEditedUser({
+          fullName: result.user.fullName || '',
+          email: result.user.email || '',
+          phone: user?.phone || '',
+          bio: user?.bio || '',
+          location: user?.location || ''
+        });
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError('Failed to update profile. Please try again.');
     }
-    setIsEditing(false);
   };
 
   const handleCancel = () => {
     setEditedUser({
-      username: user?.username || '',
-      email: user?.email || '',
       fullName: user?.fullName || '',
+      email: user?.email || '',
       phone: user?.phone || '',
       bio: user?.bio || '',
       location: user?.location || ''
     });
     setIsEditing(false);
+    setError('');
+    setSuccess('');
   };
 
   const formatJoinDate = (dateString) => {
@@ -68,7 +98,7 @@ const UserProfile = ({ user, onUpdateProfile, onClose }) => {
               <h3>{user?.fullName || user?.username || 'Unknown User'}</h3>
               <p className="user-status">Active Member</p>
               <p className="join-date">
-                Member since {formatJoinDate(user?.registeredAt)}
+                Member since {formatJoinDate(user?.createdAt)}
               </p>
             </div>
           </div>
@@ -83,8 +113,8 @@ const UserProfile = ({ user, onUpdateProfile, onClose }) => {
                 </button>
               ) : (
                 <div className="edit-actions">
-                  <button className="save-btn" onClick={handleSave}>
-                    💾 Save
+                  <button className="save-btn" onClick={handleSave} disabled={loading}>
+                    {loading ? 'Saving...' : '💾 Save'}
                   </button>
                   <button className="cancel-btn" onClick={handleCancel}>
                     ❌ Cancel
@@ -93,20 +123,37 @@ const UserProfile = ({ user, onUpdateProfile, onClose }) => {
               )}
             </div>
 
+            {error && (
+              <div style={{ 
+                color: '#e74c3c', 
+                backgroundColor: '#fdf2f2', 
+                padding: '10px', 
+                borderRadius: '5px', 
+                marginBottom: '15px',
+                border: '1px solid #fecaca'
+              }}>
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div style={{ 
+                color: '#059669', 
+                backgroundColor: '#f0fdf4', 
+                padding: '10px', 
+                borderRadius: '5px', 
+                marginBottom: '15px',
+                border: '1px solid #bbf7d0'
+              }}>
+                {success}
+              </div>
+            )}
+
             <div className="info-grid">
               <div className="info-item">
                 <label>Username</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="username"
-                    value={editedUser.username}
-                    onChange={handleInputChange}
-                    className="edit-input"
-                  />
-                ) : (
-                  <span>{user?.username || 'Not provided'}</span>
-                )}
+                <span>{user?.username || 'Not provided'}</span>
+                <small style={{ color: '#666', fontSize: '12px' }}>Username cannot be changed</small>
               </div>
 
               <div className="info-item">
@@ -142,50 +189,20 @@ const UserProfile = ({ user, onUpdateProfile, onClose }) => {
 
               <div className="info-item">
                 <label>Phone</label>
-                {isEditing ? (
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={editedUser.phone}
-                    onChange={handleInputChange}
-                    className="edit-input"
-                    placeholder="Enter your phone number"
-                  />
-                ) : (
-                  <span>{user?.phone || 'Not provided'}</span>
-                )}
+                <span>{user?.phone || 'Not provided'}</span>
+                <small style={{ color: '#666', fontSize: '12px' }}>Phone updates coming soon</small>
               </div>
 
               <div className="info-item">
                 <label>Location</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="location"
-                    value={editedUser.location}
-                    onChange={handleInputChange}
-                    className="edit-input"
-                    placeholder="Enter your location"
-                  />
-                ) : (
-                  <span>{user?.location || 'Not provided'}</span>
-                )}
+                <span>{user?.location || 'Not provided'}</span>
+                <small style={{ color: '#666', fontSize: '12px' }}>Location updates coming soon</small>
               </div>
 
               <div className="info-item full-width">
                 <label>Bio</label>
-                {isEditing ? (
-                  <textarea
-                    name="bio"
-                    value={editedUser.bio}
-                    onChange={handleInputChange}
-                    className="edit-textarea"
-                    placeholder="Tell us about yourself..."
-                    rows="3"
-                  />
-                ) : (
-                  <span>{user?.bio || 'No bio provided'}</span>
-                )}
+                <span>{user?.bio || 'No bio provided'}</span>
+                <small style={{ color: '#666', fontSize: '12px' }}>Bio updates coming soon</small>
               </div>
             </div>
           </div>
@@ -196,39 +213,39 @@ const UserProfile = ({ user, onUpdateProfile, onClose }) => {
             <div className="stats-grid">
               <div className="stat-item">
                 <div className="stat-number">
-                  {user?.stats?.totalLogins || 0}
+                  {user?.loginCount || 0}
                 </div>
                 <div className="stat-label">Total Logins</div>
               </div>
               <div className="stat-item">
                 <div className="stat-number">
-                  {user?.stats?.totalSessions || 0}
+                  {user?.role || 'user'}
                 </div>
-                <div className="stat-label">Total Sessions</div>
+                <div className="stat-label">Role</div>
               </div>
               <div className="stat-item">
                 <div className="stat-number">
-                  {user?.stats?.firstLogin ? 
-                    Math.floor((Date.now() - new Date(user.stats.firstLogin)) / (1000 * 60 * 60 * 24)) : 0
+                  {user?.createdAt ? 
+                    Math.floor((Date.now() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)) : 0
                   }
                 </div>
-                <div className="stat-label">Days Since First Login</div>
+                <div className="stat-label">Days Since Registration</div>
               </div>
             </div>
             
             {/* Additional Statistics */}
-            {user?.stats?.lastLogin && (
+            {user?.lastLogin && (
               <div className="additional-stats">
                 <div className="stat-detail">
                   <span className="stat-detail-label">Last Login:</span>
                   <span className="stat-detail-value">
-                    {new Date(user.stats.lastLogin).toLocaleString()}
+                    {new Date(user.lastLogin).toLocaleString()}
                   </span>
                 </div>
                 <div className="stat-detail">
-                  <span className="stat-detail-label">First Login:</span>
+                  <span className="stat-detail-label">Account Created:</span>
                   <span className="stat-detail-value">
-                    {new Date(user.stats.firstLogin).toLocaleString()}
+                    {new Date(user.createdAt).toLocaleString()}
                   </span>
                 </div>
               </div>

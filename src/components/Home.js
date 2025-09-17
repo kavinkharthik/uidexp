@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import Calculator from './Calculator';
-import Experiment6FormList from './Experiment6FormList'; // Adjust path if needed
 
 const Home = ({ onNavigateToCategory, onOpenTodoList, onOpenMobileCRUD }) => {
   const [showCalculator, setShowCalculator] = useState(false);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Auth from './components/Auth';
 import Header from './components/Header';
 import Home from './components/Home';
@@ -10,6 +11,7 @@ import AdminPanel from './components/AdminPanel';
 import AddItemForm from './components/AddItemForm';
 import TodoList from './components/TodoList';
 import MobileCRUD from './components/MobileCRUD';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function Contact() {
   return (
@@ -55,67 +57,15 @@ const cardStyle = {
   boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
 };
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [currentUser, setCurrentUser] = useState(null);
+function AppContent() {
+  const { user, isAuthenticated, logout, loading } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const handleLogin = (user) => {
-    setUsername(user);
-    setIsLoggedIn(true);
-
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    let userData = registeredUsers.find(u => u.username === user || u.email === user);
-
-    const userStats = JSON.parse(localStorage.getItem('userStats') || '{}');
-    const userKey = userData ? userData.username : user;
-
-    if (!userStats[userKey]) {
-      userStats[userKey] = {
-        totalLogins: 0,
-        totalSessions: 0,
-        firstLogin: new Date().toISOString(),
-        lastLogin: null,
-        loginHistory: []
-      };
-    }
-
-    userStats[userKey].totalLogins += 1;
-    userStats[userKey].totalSessions += 1;
-    userStats[userKey].lastLogin = new Date().toISOString();
-    userStats[userKey].loginHistory.push({
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent
-    });
-
-    if (userStats[userKey].loginHistory.length > 10) {
-      userStats[userKey].loginHistory = userStats[userKey].loginHistory.slice(-10);
-    }
-
-    localStorage.setItem('userStats', JSON.stringify(userStats));
-
-    if (userData) {
-      userData.stats = userStats[userKey];
-      setCurrentUser(userData);
-    } else {
-      setCurrentUser({
-        username: user,
-        email: user === 'admin' ? 'admin@mobileshowroom.com' : `${user}@example.com`,
-        fullName: user === 'admin' ? 'Administrator' : user,
-        registeredAt: userStats[userKey].firstLogin,
-        stats: userStats[userKey]
-      });
-    }
-  };
-
-  const handleLogout = () => {
-    setUsername('');
-    setCurrentUser(null);
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    await logout();
     setShowProfile(false);
     setShowAdminPanel(false);
     setCurrentPage('home');
@@ -140,18 +90,6 @@ function App() {
     setShowAdminPanel(false);
   };
 
-  const handleUpdateProfile = (updatedUser) => {
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    const userIndex = registeredUsers.findIndex(u => u.username === currentUser.username);
-
-    if (userIndex !== -1) {
-      registeredUsers[userIndex] = { ...registeredUsers[userIndex], ...updatedUser };
-      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-    }
-
-    setCurrentUser({ ...currentUser, ...updatedUser });
-    setUsername(updatedUser.username);
-  };
 
   const handleNavigateToCategory = (category) => {
     setSelectedCategory(category);
@@ -179,14 +117,28 @@ function App() {
     setCurrentPage('mobile-crud');
   };
 
-  if (!isLoggedIn) {
-    return <Auth onLogin={handleLogin} />;
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Auth />;
   }
 
   return (
     <div className="App">
       <Header
-        username={username}
+        username={user?.username || user?.fullName || 'User'}
         onLogout={handleLogout}
         onOpenProfile={handleOpenProfile}
         onGoHome={handleGoHome}
@@ -203,11 +155,17 @@ function App() {
       ) : currentPage === 'contact' ? (
         <Contact />
       ) : currentPage === 'addItem' ? (
-        <AddItemForm />
+        <ProtectedRoute>
+          <AddItemForm />
+        </ProtectedRoute>
       ) : currentPage === 'todo' ? (
-        <TodoList />
+        <ProtectedRoute>
+          <TodoList />
+        </ProtectedRoute>
       ) : currentPage === 'mobile-crud' ? (
-        <MobileCRUD />
+        <ProtectedRoute>
+          <MobileCRUD />
+        </ProtectedRoute>
       ) : (
         <List selectedCategory={selectedCategory} onGoHome={handleGoHome} />
       )}
@@ -215,17 +173,21 @@ function App() {
       <Footer />
 
       {showProfile && (
-        <UserProfile
-          user={currentUser}
-          onUpdateProfile={handleUpdateProfile}
-          onClose={handleCloseProfile}
-        />
+        <UserProfile onClose={handleCloseProfile} />
       )}
 
       {showAdminPanel && (
         <AdminPanel onClose={handleCloseAdmin} />
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

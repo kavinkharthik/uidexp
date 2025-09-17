@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Login from './Login';
 import Register from './Register';
 
-const Auth = ({ onLogin }) => {
+const Auth = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const switchToRegister = () => {
@@ -13,23 +13,12 @@ const Auth = ({ onLogin }) => {
     setIsLoginMode(true);
   };
 
-  const handleRegister = (user) => {
-    // Registration successful, could add additional logic here
-    console.log('User registered:', user);
-  };
-
   return (
     <>
       {isLoginMode ? (
-        <Login 
-          onLogin={onLogin} 
-          onSwitchToRegister={switchToRegister}
-        />
+        <Login onSwitchToRegister={switchToRegister} />
       ) : (
-        <Register 
-          onRegister={handleRegister}
-          onSwitchToLogin={switchToLogin}
-        />
+        <Register onSwitchToLogin={switchToLogin} />
       )}
     </>
   );

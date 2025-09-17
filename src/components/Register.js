@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './Register.css';
 
-const Register = ({ onRegister, onSwitchToLogin }) => {
+const Register = ({ onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    fullName: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const { register, loading, clearError } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -23,7 +26,7 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
     const { username, email, password, confirmPassword } = formData;
 
     if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      setError('Please fill in all fields');
+      setError('Please fill in all required fields');
       return false;
     }
 
@@ -50,55 +53,48 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
       return;
     }
 
-    // Check if user already exists (simple check using localStorage)
-    const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    const userExists = existingUsers.some(user => 
-      user.username === formData.username || user.email === formData.email
-    );
+    // Clear previous errors
+    setError('');
+    clearError();
 
-    if (userExists) {
-      setError('Username or email already exists');
-      return;
-    }
-
-    // Save user to localStorage
-    const newUser = {
+    // Prepare registration data
+    const registrationData = {
       username: formData.username,
       email: formData.email,
-      password: formData.password, // In a real app, this should be hashed
-      registeredAt: new Date().toISOString()
+      password: formData.password,
+      fullName: formData.fullName || formData.username
     };
 
-    existingUsers.push(newUser);
-    localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
+    // Attempt registration
+    const result = await register(registrationData);
 
-    setSuccess('Registration successful! You can now login.');
-    setError('');
-    
-    // Call the onRegister callback if provided
-    if (onRegister) {
-      onRegister(newUser);
+    if (result.success) {
+      setSuccess('Registration successful! You are now logged in.');
+      setError('');
+      
+      // Clear form
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        fullName: ''
+      });
+
+      // Auto-switch to login after 2 seconds (though user is already logged in)
+      setTimeout(() => {
+        onSwitchToLogin();
+      }, 2000);
+    } else {
+      setError(result.error);
     }
-
-    // Clear form
-    setFormData({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    });
-
-    // Auto-switch to login after 2 seconds
-    setTimeout(() => {
-      onSwitchToLogin();
-    }, 2000);
   };
 
   return (
@@ -111,7 +107,20 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
 
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="fullName">Full Name (Optional)</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="form-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="username">Username *</label>
             <input
               type="text"
               id="username"
@@ -120,11 +129,12 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
               onChange={handleChange}
               placeholder="Choose a username"
               className="form-input"
+              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Email *</label>
             <input
               type="email"
               id="email"
@@ -133,11 +143,12 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
               onChange={handleChange}
               placeholder="Enter your email"
               className="form-input"
+              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Password *</label>
             <input
               type="password"
               id="password"
@@ -146,11 +157,12 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
               onChange={handleChange}
               placeholder="Create a password"
               className="form-input"
+              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label htmlFor="confirmPassword">Confirm Password *</label>
             <input
               type="password"
               id="confirmPassword"
@@ -159,14 +171,15 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
               onChange={handleChange}
               placeholder="Confirm your password"
               className="form-input"
+              required
             />
           </div>
 
           {error && <div className="error-message">{error}</div>}
           {success && <div className="success-message">{success}</div>}
 
-          <button type="submit" className="register-btn">
-            Create Account
+          <button type="submit" className="register-btn" disabled={loading}>
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 

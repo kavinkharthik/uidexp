@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './Login.css';
 
-const Login = ({ onLogin, onSwitchToRegister }) => {
+const Login = ({ onSwitchToRegister }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login, loading, clearError } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!username.trim() || !password.trim()) {
@@ -14,37 +16,17 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
       return;
     }
 
-    // Simple validation
-    if (username.length < 3) {
-      setError('Username must be at least 3 characters');
-      return;
+    // Clear previous errors
+    setError('');
+    clearError();
+
+    // Attempt login
+    const result = await login({ username, password });
+
+    if (!result.success) {
+      setError(result.error);
     }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
-    // Check registered users first
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    const user = registeredUsers.find(u => 
-      (u.username === username || u.email === username) && u.password === password
-    );
-
-    if (user) {
-      onLogin(user.username);
-      setError('');
-      return;
-    }
-
-    // Fallback to demo credentials
-    if (username === 'admin' && password === '123456') {
-      onLogin(username);
-      setError('');
-      return;
-    }
-
-    setError('Invalid username/email or password');
+    // If successful, the AuthContext will handle the state update
   };
 
   return (
@@ -81,8 +63,8 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="login-btn">
-            Login
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
@@ -94,6 +76,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
           <div className="demo-credentials">
             <p>Demo Credentials:</p>
             <p>Username: admin | Password: 123456</p>
+            <p><small>Or create a new account to get started!</small></p>
           </div>
         </div>
       </div>
